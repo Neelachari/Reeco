@@ -6,12 +6,18 @@ import { GiMilkCarton } from "react-icons/gi";
 import { PiBowlFoodLight } from "react-icons/pi";
 import { MdAcUnit } from "react-icons/md";
 import { Products } from './Products';
+import { useSelector } from 'react-redux';
 
 export const Store = () => {
     const currentDate = new Date();
     const formattedDate = currentDate.toDateString();
+    const data=useSelector((Store)=>Store.productReducer.products)
+    
 
-
+    var Totalprice=0
+    for(let el of data ){
+      Totalprice+=+(el.price)*(el.qty)
+    }
     
   return (
     <div>
@@ -50,7 +56,7 @@ export const Store = () => {
   <tr>
     <td style={{ borderRight: '2px solid gray', padding: '2px', fontWeight:"bold" }}>East Cost Fruits <br /> & vegitables </td>
     <td style={{ borderRight: '2px solid gray', padding: '2px', fontWeight:"bold", fontSize:"small" }}>{formattedDate}</td>
-    <td style={{ borderRight: '2px solid gray', padding: '2px', fontWeight:"bold", fontSize:"small" }}>Total Value</td>
+    <td style={{ borderRight: '2px solid gray', padding: '2px', fontWeight:"bold", fontSize:"small" }}>  ${Totalprice}</td>
     <td style={{ borderRight: '2px solid gray', padding: '2px', fontWeight:"bold", fontSize:"small" }}> <div style={{display:"flex", justifyContent:"center"}}><LuMilk style={{fontSize:"20px "}} /> <GiMilkCarton style={{fontSize:"20px "}} /> <PiBowlFoodLight style={{fontSize:"20px "}} /> <MdAcUnit style={{fontSize:"20px "}} />  </div> </td>
     <td style={{ borderRight: '2px solid gray', padding: '2px', fontWeight:"bold", fontSize:"small" }}>300-400-678</td>
     <td style={{ borderRight: '2px solid gray', padding: '2px',  fontWeight:"bold" }}>Awating your <br /> approvel</td>

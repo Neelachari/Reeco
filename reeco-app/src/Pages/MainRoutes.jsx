@@ -8,7 +8,9 @@ import { Cart } from './Cart'
 
 
 export const MainRoutes = () => {
-  return <Routes> <Route path={"/"} element={<Store/>} />
+
+  return <Routes>
+  <Route path={"/Store"} element={<Store/>} />
   <Route path={"/user"} element={<Login/>} />
   <Route path={"/Orders"} element={<Orders/> } />
   <Route path={"/Analytics"} element={<Analytics/> } />

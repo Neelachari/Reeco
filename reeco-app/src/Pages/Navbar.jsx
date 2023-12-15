@@ -22,16 +22,16 @@ import { PiUserCircle } from "react-icons/pi";
   
   return (
     <DIV>
-      <Link to="/">𝑅𝑒𝑒𝒸𝑜</Link>
-      <Link to="/">Store</Link>
-      <Link to='/Orders'>Orders</Link>
-      <Link to="/Analytics">Analytics</Link>
+      <Link to="/Store">𝑅𝑒𝑒𝒸𝑜</Link>
+      <Link to="/Store">Store</Link>
+      <Link >Orders</Link>
+      <Link >Analytics</Link>
       
       <div id="search">
-      <Link to='/Cart'><PiShoppingCartSimpleLight style={{fontSize:"30px "}} /></Link>
+      <Link ><PiShoppingCartSimpleLight style={{fontSize:"30px "}} /></Link>
       </div> 
       <div id="Login">
-      <Link to='/user'> <  PiUserCircle style={{fontSize:"30px "}} /></Link>
+      <Link > Hello,User</Link>
       </div>
     </DIV>
   )
