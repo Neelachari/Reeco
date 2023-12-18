@@ -31,7 +31,7 @@ Start the server
 
 
 ## Support
-For support, email -neelachari34@gmail.com 
+email -neelachari34@gmail.com 
 
 For Go to the website click the link:-
 
