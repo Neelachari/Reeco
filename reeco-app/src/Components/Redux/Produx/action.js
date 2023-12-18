@@ -1,5 +1,5 @@
 import axios from "axios"
-import { EDIT_PRODUCT_FAILURE, EDIT_PRODUCT_SUCCESS, GET_PRODUCT_SUCCESS, PRODUCT_FAILURE, PRODUCT_REQUEST, UPDATE_PRODUCT_STATUS } from "./actiontypes"
+import { EDIT_PRODUCT_FAILURE, EDIT_PRODUCT_SUCCESS, FETCH_PRODUCTS_FAILURE, FETCH_PRODUCTS_SUCCESS, GET_PRODUCT_SUCCESS, PRODUCT_FAILURE, PRODUCT_REQUEST, UPDATE_PRODUCT_STATUS } from "./actiontypes"
 
 
 //get Products
@@ -41,3 +41,6 @@ export const updateProductStatus = (productId, status) => {
     payload: error,
   });
   
+
+
+

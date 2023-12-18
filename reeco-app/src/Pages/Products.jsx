@@ -4,11 +4,15 @@ import { Button, Img, useDisclosure,  Modal,
   ModalHeader,
   ModalFooter,
   ModalBody,
-  ModalCloseButton } from '@chakra-ui/react'
+  ModalCloseButton, 
+  FormControl,
+  FormLabel,
+  Input,
+  Select} from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
 import { PiPrinterLight } from "react-icons/pi";
 import { useDispatch, useSelector } from 'react-redux'
-import { getProducts, updateProductStatus } from '../Components/Redux/Produx/action';
+import { editProductFailure, editProductSuccess,  getProducts, updateProductStatus } from '../Components/Redux/Produx/action';
 import { useLocation, useSearchParams } from 'react-router-dom'
 import { Store } from './Store';
 import { CheckIcon, CloseIcon, EditIcon } from '@chakra-ui/icons'
@@ -64,8 +68,10 @@ const handleYesClick=(productId)=>{
     console.log(status,"statusss")
     setSelectedProductId(productId)
     dispatch(updateProductStatus(selectedProductId, status));
+ 
     dispatch(getProducts())
-    setIsDialogOpen(false);
+    
+    
 }
 
 const handleNoClick = (productId) => {
@@ -92,10 +98,9 @@ const handleEditClick = (productId) => {
 
 
 const fillInfo = (selectedProductId)=>{
-  // console.log("edited")
-  // console.log("selectedProductId",selectedProductId)
+ 
   const selectedProduct = data.find(product => product.id == selectedProductId );
-  // console.log(selectedProduct,"selectedProduct")
+
   if (selectedProduct) {
     setEditedProduct({
       price: selectedProduct.price.toString(),
@@ -107,6 +112,67 @@ const fillInfo = (selectedProductId)=>{
     });
   }
 }
+
+
+const handleDialogClose = () => {
+  setIsDialogOpen(false);
+};
+
+const handleEditClose = () => {
+  setIsEditing(false);
+  setSelectedProductId(null);
+  setEditedProduct({
+    price: "",
+  qty: "",
+  reason: "",
+  name: "",
+  brand:"",
+  });
+};
+
+
+const handleEditFieldChange = (field, value) => {
+  setEditedProduct({
+    ...editedProduct,
+    [field]: value,
+  });
+};
+
+
+
+const handleEditSubmit = async () => {
+  try {
+    if (editedProduct.price >= 0 && editedProduct.qty >= 0) {
+      const updatedData = { status : "Updated",price: editedProduct.price, qty: editedProduct.qty, reason: editedProduct.reason,name:editedProduct.name, brand :editedProduct.brand, img_url: "https://media.istockphoto.com/id/94929126/photo/avocados-isolated-on-white.jpg?s=612x612&w=0&k=20&c=c0BSuWnUTAkZyj-cYHKzR5dXtZWQ1_3PXcea3M92Z4I="};
+      await fetch(`https://react-deployeement-server.onrender.com/products/${selectedProductId}`, {
+        method: "PUT",
+        headers: {"Content-Type": "application/json", },
+        body: JSON.stringify(updatedData),
+      });
+
+      dispatch(editProductSuccess());
+
+      setIsEditing(false);
+      setSelectedProductId(null);
+      setEditedProduct({
+        price: "",
+  qty: "",
+  reason: "",
+  name: "",
+  brand:"",
+  img_url: "https://media.istockphoto.com/id/94929126/photo/avocados-isolated-on-white.jpg?s=612x612&w=0&k=20&c=c0BSuWnUTAkZyj-cYHKzR5dXtZWQ1_3PXcea3M92Z4I="
+      });
+
+  
+      dispatch(getProducts())
+    } else {
+      alert("Please enter valid price and quantity (both should be >= 0).");
+    }
+  } catch (error) {
+    dispatch(editProductFailure(error.message));
+   
+  }
+};
 
 
   return (
@@ -137,7 +203,7 @@ const fillInfo = (selectedProductId)=>{
               <th style={{ borderRight: '0.5px solid gray', padding: '5px', fontSize:"medium", fontWeight:"normal", color:"black" }}>Status</th>
             </thead>
            <tbody>
-            { data?.map((item)=>
+            {  data?.map((item)=>
               
               <tr>
                  <td style={{ border: '0.5px solid gray', padding: '2px' }} ><div style={{textAlign:"center"}}>
@@ -154,43 +220,100 @@ const fillInfo = (selectedProductId)=>{
                     {item.status}
                   </Button>
 
-                    <CheckIcon onClick={() => handleYesClick(item.id)}   w={6} h={4} mr={'10px'} color="gray.500" />
+                  <Button > <CheckIcon onClick={() => handleYesClick(item.id)}   w={4} h={4} mr={'10px'} color="gray.500"  /></Button>
 
-                  
+              
+                   <Button onClick={() => handleNoClick(item.id)}><CloseIcon onClick={ onOpen}  w={4} h={4} color="gray.500" mr={'10px'} /></Button>
 
-                   <Button onClick={() => handleNoClick(item.id)}><CloseIcon onClick={ onOpen}  w={6} h={4} color="gray.500" mr={'10px'} /></Button>
+        
+                  <EditIcon onClick={() => handleEditClick(item.id)} w={6} h={4} color="gray.500" />
 
-                  <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}  >
+                  <Modal isOpen={isDialogOpen} onClose={handleDialogClose}>
         <ModalOverlay style={{ backdropFilter : 'blur(2px)',backgroundColor: 'transparent' }} />
         <ModalContent>
           <ModalHeader>Missing Product</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pb={6}>
-          <p>Is this Product urgent ?</p>
-          </ModalBody>
-
+          <ModalBody>is this Product urgent?</ModalBody>
           <ModalFooter>
-            <Button onClick={() => handleDialogConfirm(true)}  colorScheme='green' mr={3} >
-              Yes
+          <Button mr={3} colorScheme="green" onClick={() => handleDialogConfirm(true)}>
+    Yes
+  </Button>
+  <Button  mr={3} onClick={() => handleDialogConfirm(false)}>
+    No
+  </Button>
+ 
+</ModalFooter>
+        </ModalContent>
+      </Modal>
+       {/* ----------------Dialog box ------------------------ */}
+
+      <Modal isOpen={isEditing} onClose={handleEditClose}>
+        <ModalOverlay style={{ backdropFilter : 'blur(2px)',backgroundColor: 'transparent' }} />
+        <ModalContent>
+          <ModalHeader>Edit Product</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <FormControl>
+              <FormLabel>Price</FormLabel>
+              <Input
+                type="number"
+                value={editedProduct.price}
+                onChange={(e) => handleEditFieldChange('price', e.target.value)}
+              />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Quantity</FormLabel>
+              <Input
+                type="number"
+                value={editedProduct.qty}
+                onChange={(e) => handleEditFieldChange('qty', e.target.value)}
+              />
+            </FormControl>
+            {/* ----- */}
+            <FormControl mt={4}>
+              <FormLabel>Name</FormLabel>
+              <Input
+                type="text"
+                value={editedProduct.name}
+                onChange={(e) => handleEditFieldChange('name', e.target.value)}
+              />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Brand</FormLabel>
+              <Input
+                type="text"
+                value={editedProduct.brand}
+                onChange={(e) => handleEditFieldChange('brand', e.target.value)}
+              />
+            </FormControl>
+            
+             {/* ----- */}
+            <FormControl mt={4}>
+              <FormLabel>Reason</FormLabel>
+              <Select
+                value={editedProduct.reason}
+                onChange={(e) => handleEditFieldChange('reason', e.target.value)}
+              >
+                <option value="Reason 1">I changed my mind</option>
+                <option value="Reason 2">Price is to high</option>
+              </Select>
+            </FormControl>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="green" mr={3} onClick={handleEditSubmit}>
+              Update
             </Button>
-            <Button onClick={onClose}>No</Button>
+            <Button onClick={handleEditClose}>Cancel</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
-                  
-
-                  <EditIcon onClick={() => handleEditClick(item.id)} w={6} h={4} color="gray.500" />
-
-
                  </div>
                  
                  </td>
               </tr>
-            )}
+            )  }  
            </tbody>
           </table>
-
-
+          
 
           </div>
 

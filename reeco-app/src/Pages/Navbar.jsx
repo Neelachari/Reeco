@@ -22,8 +22,8 @@ import { PiUserCircle } from "react-icons/pi";
   
   return (
     <DIV>
-      <Link to="/Store">𝑅𝑒𝑒𝒸𝑜</Link>
-      <Link to="/Store">Store</Link>
+      <Link >𝑅𝑒𝑒𝒸𝑜</Link>
+      <Link to="/">Store</Link>
       <Link >Orders</Link>
       <Link >Analytics</Link>
       
